@@ -1,0 +1,156 @@
+# ==========================================================
+#   DarkRune Tab - Configuration
+#   High-performance Tab List plugin for Paper 1.21+
+#   Developer: DarkRune Dev
+# ==========================================================
+
+plugin:
+  # Префикс для всех сообщений плагина
+  prefix: "&8[&5DarkRune Tab&8]&r "
+
+# ==========================================================
+#   Performance settings
+# ==========================================================
+performance:
+  # Асинхронное разрешение плейсхолдеров (рекомендуется true)
+  async_resolution: true
+
+  # Батчинг обновлений (объединять обновления игроков)
+  batch_updates: true
+
+  # Интервал батча в миллисекундах (10-5000)
+  batch_interval_ms: 100
+
+  # Максимум обновлений в секунду на игрока (1-100)
+  max_updates_per_second: 5
+
+  # Размер кэша компонентов (100-100000)
+  component_cache_size: 10000
+
+  # Размер кэша плейсхолдеров (1000-500000)
+  placeholder_cache_size: 50000
+
+# ==========================================================
+#   Display modules
+# ==========================================================
+modules:
+
+  # ----- Tab List -----
+  tablist:
+    enabled: true
+
+    # Верхняя часть таб-листа
+    header:
+      text: |
+        <gradient:gold:yellow>My Server</gradient>
+        <gray>Online: <aqua>%server_online%</aqua>/<aqua>%server_max_players%</aqua>
+      # Интервал обновления в секундах (1-600)
+      update_interval: 5
+
+    # Нижняя часть таб-листа
+    footer:
+      text: |
+        <gray>TPS: <green>%server_tps%</green>  <gray>|  Ping: <yellow>%player_ping%ms</yellow>
+      update_interval: 5
+
+    # Формат имени игрока в табе
+    player_format:
+      # %display_lp_prefix%, %player_name%, %display_lp_suffix% - из LuckPerms
+      format: "%display_lp_prefix%%player_name%%display_lp_suffix%"
+      # 0 = обновление только по событиям, >0 = периодическое
+      update_interval: 0
+
+    # Сортировка игроков в табе
+    sorting:
+      enabled: true
+      # Тип сортировки: luckperms_weight, name, join_time
+      type: "luckperms_weight"
+      # Направление: descending (по убыванию веса) или ascending
+      direction: "descending"
+
+    # Максимум видимых игроков (0 = без ограничений)
+    max_visible_players: 0
+
+  # ----- Nametags (имена над головой) -----
+  nametags:
+    enabled: true
+
+    # Формат имени
+    format:
+      prefix: "%display_lp_prefix%"
+      name: "%player_name%"
+      suffix: "%display_lp_suffix%"
+
+    # Цвет имени по группе (из meta-ключа "color" в LuckPerms)
+    team_color:
+      enabled: true
+
+  # ----- Scoreboard (боковая панель) -----
+  scoreboard:
+    enabled: false
+
+    # Заголовок
+    title: "&6&lMy Server"
+
+    # Строки (до 15)
+    lines:
+      - ""
+      - "&7Player: &e%player_name%"
+      - "&7Group: &a%display_lp_primary_group_displayname%"
+      - "&7World: &b%player_world%"
+      - ""
+      - "&7Online: &e%server_online%"
+      - "&7Time: &6%server_time%"
+      - ""
+
+    # Интервал обновления в секундах (1-600)
+    update_interval: 5
+
+# ==========================================================
+#   Placeholders
+# ==========================================================
+placeholders:
+  # Интервал обновления по умолчанию (в секундах)
+  default_update_interval: 10
+
+  # Переопределение TTL для конкретных плейсхолдеров
+  # 0 = статический (не обновляется)
+  ttl:
+    player_name: 0
+    player_uuid: 0
+    player_displayname: 0
+    player_world: 0
+    player_gamemode: 0
+
+    display_lp_prefix: 0
+    display_lp_suffix: 0
+    display_lp_primary_group: 0
+    display_lp_primary_group_displayname: 0
+    display_lp_group_weight: 0
+
+    server_max_players: 0
+
+    server_online: 5
+    server_tps: 5
+
+    vault_eco_balance: 10
+    player_ping: 30
+
+    player_health: 2
+    player_food: 2
+    player_level: 5
+
+  # Чёрный список плейсхолдеров
+  blacklist:
+    enabled: false
+    blocked: []
+
+# ==========================================================
+#   Messages
+# ==========================================================
+messages:
+  help_header: "&6=== DarkRune Tab Help ==="
+  reloaded: "&aConfigs reloaded in &e%time%ms"
+  no_permission: "&cNo permission!"
+  module_toggled: "&aModule &e%module% &a%state%"
+  module_not_found: "&cModule not found: &e%module%"
