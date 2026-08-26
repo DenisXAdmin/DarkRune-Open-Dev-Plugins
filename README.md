@@ -198,13 +198,5 @@ Full text: [LICENSE](LICENSE)
 - Bugs and suggestions — via [Issues](../../issues)
 - Include core version, plugin version, startup log and reproduction steps
 
----
-
-## Other plugins by DarkRune Dev
-
-- **DarkRune Tab** — this plugin
-- Coming soon: **DarkRune Spawn**, **DarkRune Kits**
-
----
 
 © 2026 DarkRune Dev
