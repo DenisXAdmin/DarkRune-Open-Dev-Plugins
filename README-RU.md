@@ -201,11 +201,4 @@ modules:
 
 ---
 
-## Другие плагины DarkRune Dev
-
-- **DarkRune Tab** — этот плагин
-- Скоро: **DarkRune Spawn**, **DarkRune Kits**
-
----
-
 © 2026 DarkRune Dev
