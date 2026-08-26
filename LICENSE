@@ -1,21 +1,168 @@
-MIT License
+DARKRUNE OPEN LICENSE (DROL)
+Version 1.0
 
-Copyright (c) 2026 DenisXAdmin
+Copyright (C) 2026 DarkRune Dev
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
+This License defines the terms of use, modification, distribution and sale
+of the software product, including its source code (hereinafter referred to
+as the "Plugin").
 
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
+By using, copying, distributing or selling the Plugin, you accept the terms
+of this License. If you do not agree with these terms, you may not use the
+Plugin.
 
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
+------------------------------------------------------------------------
+
+1. DEFINITIONS
+
+1.1. "Rights Holder" means DarkRune Dev, the author and holder of the
+exclusive rights to the Plugin and its source code.
+
+1.2. "Plugin" means a software product of the DarkRune Dev line distributed
+under this License, including its source code, documentation and
+accompanying materials.
+
+1.3. "Source Code" means the source code of the Plugin in any form,
+including fragments thereof.
+
+1.4. "Sale" means providing the Plugin to third parties for a fee or other
+consideration.
+
+1.5. "Modification" means any alteration of the Plugin or the Source Code,
+including addition, removal or reworking of any part thereof.
+
+1.6. "Malicious Code" means code intended to cause harm, including but not
+limited to: theft of data or credentials, unauthorized access to systems,
+corruption or deletion of data, covert cryptocurrency mining, backdoors,
+viral or trojan components, and spyware functionality.
+
+1.7. "Permission" means the Rights Holder's consent to an act restricted by
+this License, expressed in writing or in the form of a digital document
+bearing the Rights Holder's signature (including an electronic signature or
+a signed document transmitted through the Rights Holder's official
+communication channels).
+
+1.8. "Attribution" means the indication of authorship in the manner set
+forth in Section 6.
+
+------------------------------------------------------------------------
+
+2. RIGHTS GRANTED WITHOUT PERMISSION
+
+2.1. Any person is granted the right to use the Plugin free of charge for
+any purpose, including installation on any servers (including commercial
+servers).
+
+2.2. The right to study the Source Code is granted.
+
+2.3. The right to create Modifications for personal use is granted, subject
+to the restrictions of Section 5.
+
+2.4. The right to distribute unmodified copies of the Plugin free of charge
+(gratuitously) is granted, provided that Attribution is preserved.
+
+------------------------------------------------------------------------
+
+3. SALE OF THE PLUGIN
+
+3.1. Sale of the Plugin by any person is permitted only with the prior
+Permission of the Rights Holder.
+
+3.2. Permission shall be executed in writing or in the form of a digital
+document bearing the Rights Holder's signature, and may contain additional
+conditions (deduction amounts, sales channels, term of validity and other
+conditions).
+
+3.3. The requirement of paragraph 3.1 shall not apply to persons who have
+obtained the Plugin as a result of a paid purchase made in accordance with
+this License or with a Permission - such persons acquire rights under the
+Purchaser's License (Section 4).
+
+------------------------------------------------------------------------
+
+4. PURCHASER'S LICENSE
+
+4.1. From the moment of a paid purchase of the Plugin, this Section 4 shall
+apply to the Purchaser, replacing the terms of Sections 2 and 3 to the
+extent they conflict with this Section.
+
+4.2. The Purchaser's License does not restrict the sale of the Plugin by
+the Purchaser, including resale in unmodified or modified form, subject to
+the terms of this License.
+
+4.3. The Purchaser shall preserve and reproduce the Attribution upon any
+distribution or sale of the Plugin.
+
+4.4. The Purchaser is prohibited from using the Source Code (including
+fragments thereof) in their own or third-party projects without the
+Permission of the Rights Holder in any form. Use of the Source Code is
+permitted only within the Plugin itself and its Modifications.
+
+4.5. The Purchaser's License is transferred to subsequent purchasers upon
+resale under the same terms.
+
+------------------------------------------------------------------------
+
+5. MODIFICATION
+
+5.1. Modification of the Plugin is permitted subject to the terms of this
+License.
+
+5.2. Embedding Malicious Code into the Plugin or its Modifications in any
+form is prohibited.
+
+5.3. When distributing Modifications, it must be clearly indicated that the
+product has been modified, and the Attribution of the original Plugin must
+be preserved.
+
+------------------------------------------------------------------------
+
+6. ATTRIBUTION
+
+6.1. Attribution means the indication, in a prominent place (product
+description, documentation and/or the Plugin's interface), of the
+following:
+(a) the original author: "DarkRune Dev";
+(b) the original name of the Plugin;
+(c) a link to the Rights Holder's official source (repository or website).
+
+6.2. Removal or distortion of the Attribution is prohibited.
+
+------------------------------------------------------------------------
+
+7. DISCLAIMER OF WARRANTIES AND LIMITATION OF LIABILITY
+
+7.1. The Plugin is provided "as is", without warranties of any kind,
+whether express or implied.
+
+7.2. The Rights Holder shall not be liable for any damage, including loss
+of data, profits or reputation, arising from the use of or inability to use
+the Plugin.
+
+7.3. The Purchaser and/or distributor of the Plugin shall be solely liable
+to third parties for the use, sale and support of the Plugin.
+
+------------------------------------------------------------------------
+
+8. VIOLATION OF TERMS
+
+8.1. Any violation of the terms of this License results in the automatic
+termination of the rights granted hereunder.
+
+8.2. The Rights Holder retains the right to demand cessation of the
+violation and compensation for damages in accordance with applicable law.
+
+------------------------------------------------------------------------
+
+9. FINAL PROVISIONS
+
+9.1. The Rights Holder retains the right to issue new versions of this
+License. New versions shall not have retroactive effect with respect to
+copies distributed under previous versions.
+
+9.2. Paid (proprietary) products of the DarkRune Dev line are not governed
+by this License and are subject to the terms of the corresponding separate
+license.
+
+9.3. If any provision of this License is held to be invalid, the remaining
+provisions shall remain in full force and effect.
