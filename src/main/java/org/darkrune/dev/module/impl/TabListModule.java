@@ -10,8 +10,7 @@ import org.darkrune.dev.util.Utils;
 
 /**
  * Модуль таб-листа.
- * Отвечает за хедер и футер таб-листа.
- * Обновляется периодически и при событиях.
+ * Хедер/футер + полный контроль строки игрока в табе (player_format).
  *
  * @author DarkRune Dev
  * @since 1.0.0
@@ -26,81 +25,80 @@ public class TabListModule implements DisplayModule {
         this.enabled = plugin.getConfigs().getTab().isEnabled();
     }
 
-    @Override
-    public String getName() {
-        return "tablist";
-    }
-
-    @Override
-    public boolean isEnabled() {
-        return enabled;
-    }
-
-    @Override
-    public void setEnabled(boolean enabled) {
-        this.enabled = enabled;
-    }
+    @Override public String getName() { return "tablist"; }
+    @Override public boolean isEnabled() { return enabled; }
+    @Override public void setEnabled(boolean e) { this.enabled = e; }
 
     @Override
     public void initialize() {
-        if (!enabled) {
-            return;
-        }
+        if (!enabled) return;
 
         Configs.TabConfig config = plugin.getConfigs().getTab();
-        long periodTicks = config.getHeaderUpdateInterval() * 20L;
+        long headerPeriod = config.getHeaderUpdateInterval() * 20L;
 
-        // Глобальная периодическая задача обновления хедера/футера
+        // Периодическое обновление хедера/футера
         plugin.getAdapter().runRepeatingGlobal(() -> {
-            if (!enabled) {
-                return;
+            if (!enabled) return;
+            for (Player p : Bukkit.getOnlinePlayers()) {
+                updateHeaderFooter(p);
             }
-            for (Player player : Bukkit.getOnlinePlayers()) {
-                updateHeaderFooter(player);
-            }
-        }, 20L, periodTicks);
+        }, 20L, headerPeriod);
 
-        plugin.getLogger().info("TabList module initialized (period: " + config.getHeaderUpdateInterval() + "s)");
+        // Периодическое обновление формата игрока (если interval > 0)
+        int playerInterval = config.getPlayerUpdateInterval();
+        if (playerInterval > 0) {
+            long playerPeriod = playerInterval * 20L;
+            plugin.getAdapter().runRepeatingGlobal(() -> {
+                if (!enabled) return;
+                for (Player p : Bukkit.getOnlinePlayers()) {
+                    applyPlayerFormat(p);
+                }
+            }, 20L, playerPeriod);
+        }
+
+        plugin.getLogger().info("TabList module initialized");
     }
 
-    @Override
-    public void shutdown() {
-        // Задачи отменяются глобально через adapter.cancelAllTasks()
-    }
+    @Override public void shutdown() {}
 
     @Override
     public void update(Player player) {
-        if (!enabled || player == null || !player.isOnline()) {
-            return;
-        }
+        if (!enabled || player == null || !player.isOnline()) return;
         updateHeaderFooter(player);
+        applyPlayerFormat(player);
+    }
+
+    private void updateHeaderFooter(Player player) {
+        Configs.TabConfig config = plugin.getConfigs().getTab();
+        String headerText = config.getHeader();
+        String footerText = config.getFooter();
+        if (headerText.isEmpty() && footerText.isEmpty()) return;
+
+        plugin.getAdapter().runAsync(() -> {
+            Component header = Utils.parse(plugin.getPlaceholderResolver().resolve(player, headerText));
+            Component footer = Utils.parse(plugin.getPlaceholderResolver().resolve(player, footerText));
+            plugin.getAdapter().sendTabListHeaderFooter(player, header, footer);
+        });
     }
 
     /**
-     * Обновляет хедер и футер таб-листа для игрока.
-     * Разрешение плейсхолдеров выполняется асинхронно.
+     * Применяет tablist.player_format как имя игрока в табе.
+     * Даёт полный контроль над строкой в табе (ники, HP, титулы).
      */
-    private void updateHeaderFooter(Player player) {
-        Configs.TabConfig config = plugin.getConfigs().getTab();
-
-        String headerText = config.getHeader();
-        String footerText = config.getFooter();
-
-        // Если оба пустые - нечего отправлять
-        if (headerText.isEmpty() && footerText.isEmpty()) {
+    private void applyPlayerFormat(Player player) {
+        String format = plugin.getConfigs().getTab().getPlayerFormat();
+        if (format == null || format.isEmpty()) {
+            player.playerListName(null);
             return;
         }
 
-        // Асинхронное разрешение плейсхолдеров
         plugin.getAdapter().runAsync(() -> {
-            String resolvedHeader = plugin.getPlaceholderResolver().resolve(player, headerText);
-            String resolvedFooter = plugin.getPlaceholderResolver().resolve(player, footerText);
-
-            Component header = Utils.parse(resolvedHeader);
-            Component footer = Utils.parse(resolvedFooter);
-
-            // Отправка в контексте игрока (учитывает регион в Folia)
-            plugin.getAdapter().sendTabListHeaderFooter(player, header, footer);
+            Component name = Utils.parse(plugin.getPlaceholderResolver().resolve(player, format));
+            plugin.getAdapter().runAtPlayer(player, () -> {
+                if (player.isOnline()) {
+                    player.playerListName(name);
+                }
+            });
         });
     }
 }
