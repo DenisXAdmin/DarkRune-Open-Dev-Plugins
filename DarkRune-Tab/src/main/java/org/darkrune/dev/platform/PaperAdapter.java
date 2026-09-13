@@ -16,7 +16,6 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 
 /**
  * Адаптер для Paper.
- * Использует BukkitScheduler и виртуальные потоки Java 21.
  *
  * @author DarkRune Dev
  * @since 1.0.0
@@ -28,11 +27,41 @@ public class PaperAdapter implements PlatformAdapter {
     private final ConcurrentLinkedQueue<Player> updateQueue = new ConcurrentLinkedQueue<>();
     private volatile boolean batchScheduled = false;
 
-    private final Scoreboard sharedScoreboard;
+    private volatile Scoreboard sharedScoreboard;
+    private volatile boolean scoreboardAttempted = false;
+    private volatile boolean scoreboardSupported = false;
 
     public PaperAdapter(DarkRuneTab plugin) {
         this.plugin = plugin;
-        this.sharedScoreboard = Bukkit.getScoreboardManager().getNewScoreboard();
+        // Ленивая инициализация — для единообразия с Folia
+    }
+
+    @Override
+    public Scoreboard getSharedScoreboard() {
+        if (!scoreboardAttempted) {
+            synchronized (this) {
+                if (!scoreboardAttempted) {
+                    scoreboardAttempted = true;
+                    try {
+                        sharedScoreboard = Bukkit.getScoreboardManager().getNewScoreboard();
+                        scoreboardSupported = true;
+                    } catch (UnsupportedOperationException | IllegalStateException e) {
+                        sharedScoreboard = null;
+                        scoreboardSupported = false;
+                        plugin.getLogger().warning(
+                                "Shared scoreboard is not supported: " + e.getMessage());
+                    }
+                }
+            }
+        }
+        return sharedScoreboard;
+    }
+
+    public boolean isScoreboardSupported() {
+        if (!scoreboardAttempted) {
+            getSharedScoreboard();
+        }
+        return scoreboardSupported;
     }
 
     @Override
@@ -74,6 +103,10 @@ public class PaperAdapter implements PlatformAdapter {
         if (!viewer.isOnline() || !target.isOnline()) {
             return;
         }
+        if (!isScoreboardSupported()) {
+            target.displayName(displayName);
+            return;
+        }
 
         String teamName = getTeamName(target);
         Team team = sharedScoreboard.getTeam(teamName);
@@ -89,11 +122,6 @@ public class PaperAdapter implements PlatformAdapter {
         if (viewer.getScoreboard() != sharedScoreboard) {
             viewer.setScoreboard(sharedScoreboard);
         }
-    }
-
-    @Override
-    public Scoreboard getSharedScoreboard() {
-        return sharedScoreboard;
     }
 
     @Override

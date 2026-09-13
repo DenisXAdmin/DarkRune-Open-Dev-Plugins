@@ -1,7 +1,6 @@
 package org.darkrune.dev.module.impl;
 
 import net.kyori.adventure.text.Component;
-import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.scoreboard.Scoreboard;
 import org.bukkit.scoreboard.Team;
@@ -28,13 +27,32 @@ public class NametagModule implements DisplayModule {
         this.enabled = plugin.getConfigs().getNametag().isEnabled();
     }
 
-    @Override public String getName() { return "nametags"; }
-    @Override public boolean isEnabled() { return enabled; }
-    @Override public void setEnabled(boolean enabled) { this.enabled = enabled; }
+    @Override
+    public String getName() {
+        return "nametags";
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return enabled;
+    }
+
+    @Override
+    public void setEnabled(boolean enabled) {
+        this.enabled = enabled;
+    }
 
     @Override
     public void initialize() {
         if (enabled) {
+            // Проверяем поддержку скорборда на этой платформе
+            if (!plugin.getAdapter().isScoreboardSupported()) {
+                plugin.getLogger().warning(
+                        "Nametag module disabled: shared scoreboard is not supported on "
+                                + plugin.getAdapter().getPlatformName());
+                this.enabled = false;
+                return;
+            }
             plugin.getLogger().info("Nametag module initialized");
         }
     }
@@ -42,15 +60,24 @@ public class NametagModule implements DisplayModule {
     @Override
     public void reload() {
         this.enabled = plugin.getConfigs().getNametag().isEnabled();
+        // Повторная проверка поддержки
+        if (enabled && !plugin.getAdapter().isScoreboardSupported()) {
+            plugin.getLogger().warning(
+                    "Nametag module disabled: shared scoreboard is not supported on "
+                            + plugin.getAdapter().getPlatformName());
+            this.enabled = false;
+        }
     }
 
     @Override
-    public void shutdown() {}
+    public void shutdown() {
+    }
 
     @Override
     public void resetAll() {
-        // Удаляем все teams, созданные модулем, - имена возвращаются к ванильным
+        if (!plugin.getAdapter().isScoreboardSupported()) return;
         Scoreboard board = plugin.getAdapter().getSharedScoreboard();
+        if (board == null) return;
         for (Team team : new ArrayList<>(board.getTeams())) {
             team.unregister();
         }
@@ -59,6 +86,7 @@ public class NametagModule implements DisplayModule {
     @Override
     public void update(Player player) {
         if (!enabled || player == null || !player.isOnline()) return;
+        if (!plugin.getAdapter().isScoreboardSupported()) return;
 
         Configs.NametagConfig config = plugin.getConfigs().getNametag();
 
@@ -79,6 +107,7 @@ public class NametagModule implements DisplayModule {
 
     private void applyTeam(Player player, Component prefix, Component name, Component suffix) {
         Scoreboard board = plugin.getAdapter().getSharedScoreboard();
+        if (board == null) return;
 
         String teamName = getTeamName(player);
         Team team = board.getTeam(teamName);

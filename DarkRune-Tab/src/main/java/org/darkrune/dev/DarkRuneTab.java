@@ -100,11 +100,37 @@ public class DarkRuneTab extends JavaPlugin {
     }
 
     /**
+     * Проверка наличия классов LuckPerms API в classpath.
+     * Необходимо, чтобы избежать NoClassDefFoundError при загрузке класса
+     * LuckPermsIntegration, если LuckPerms не установлен.
+     */
+    private boolean isLuckPermsApiAvailable() {
+        try {
+            Class.forName("net.luckperms.api.LuckPermsProvider");
+            return true;
+        } catch (ClassNotFoundException e) {
+            return false;
+        }
+    }
+
+    /**
      * Инициализация всех компонентов плагина.
      */
     private void initializeComponents() {
         this.configs = new Configs(this);
-        this.luckPerms = new LuckPermsIntegration(this);
+
+        // Создаём LuckPermsIntegration только если API доступен в classpath
+        if (isLuckPermsApiAvailable() && Bukkit.getPluginManager().getPlugin("LuckPerms") != null) {
+            try {
+                this.luckPerms = new LuckPermsIntegration(this);
+            } catch (NoClassDefFoundError | Exception e) {
+                getLogger().warning("Failed to initialize LuckPerms integration: " + e.getMessage());
+                this.luckPerms = null;
+            }
+        } else {
+            this.luckPerms = null;
+        }
+
         this.placeholderResolver = new PlaceholderResolver(this);
         this.updateScheduler = new UpdateScheduler(this);
         this.moduleManager = new ModuleManager(this);

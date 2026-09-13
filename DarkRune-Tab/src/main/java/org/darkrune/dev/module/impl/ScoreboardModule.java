@@ -1,6 +1,5 @@
 package org.darkrune.dev.module.impl;
 
-import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.scoreboard.Criteria;
 import org.bukkit.scoreboard.DisplaySlot;
@@ -39,13 +38,32 @@ public class ScoreboardModule implements DisplayModule {
         this.enabled = plugin.getConfigs().getScoreboard().isEnabled();
     }
 
-    @Override public String getName() { return "scoreboard"; }
-    @Override public boolean isEnabled() { return enabled; }
-    @Override public void setEnabled(boolean enabled) { this.enabled = enabled; }
+    @Override
+    public String getName() {
+        return "scoreboard";
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return enabled;
+    }
+
+    @Override
+    public void setEnabled(boolean enabled) {
+        this.enabled = enabled;
+    }
 
     @Override
     public void initialize() {
         if (enabled) {
+            // Проверяем поддержку скорборда на этой платформе
+            if (!plugin.getAdapter().isScoreboardSupported()) {
+                plugin.getLogger().warning(
+                        "Scoreboard module disabled: shared scoreboard is not supported on "
+                                + plugin.getAdapter().getPlatformName());
+                this.enabled = false;
+                return;
+            }
             startTasks();
         }
         plugin.getLogger().info("Scoreboard module initialized");
@@ -56,6 +74,13 @@ public class ScoreboardModule implements DisplayModule {
         this.enabled = plugin.getConfigs().getScoreboard().isEnabled();
         cancelTasks();
         if (enabled) {
+            if (!plugin.getAdapter().isScoreboardSupported()) {
+                plugin.getLogger().warning(
+                        "Scoreboard module disabled: shared scoreboard is not supported on "
+                                + plugin.getAdapter().getPlatformName());
+                this.enabled = false;
+                return;
+            }
             startTasks();
         }
     }
@@ -68,7 +93,9 @@ public class ScoreboardModule implements DisplayModule {
 
     @Override
     public void resetAll() {
+        if (!plugin.getAdapter().isScoreboardSupported()) return;
         Scoreboard board = plugin.getAdapter().getSharedScoreboard();
+        if (board == null) return;
         Objective objective = board.getObjective(OBJECTIVE_NAME);
         if (objective != null) {
             objective.unregister();
@@ -79,6 +106,7 @@ public class ScoreboardModule implements DisplayModule {
     @Override
     public void update(Player player) {
         if (!enabled || player == null || !player.isOnline()) return;
+        if (!plugin.getAdapter().isScoreboardSupported()) return;
 
         Configs.ScoreboardConfig config = plugin.getConfigs().getScoreboard();
 
@@ -103,7 +131,7 @@ public class ScoreboardModule implements DisplayModule {
 
         tasks.add(plugin.getAdapter().runRepeatingGlobal(() -> {
             if (!enabled) return;
-            for (Player p : Bukkit.getOnlinePlayers()) {
+            for (Player p : org.bukkit.Bukkit.getOnlinePlayers()) {
                 update(p);
             }
         }, 20L, config.getUpdateInterval() * 20L));
@@ -118,6 +146,7 @@ public class ScoreboardModule implements DisplayModule {
 
     private void applyScoreboard(Player player, String title, List<String> lines) {
         Scoreboard board = plugin.getAdapter().getSharedScoreboard();
+        if (board == null) return;
 
         Objective objective = board.getObjective(OBJECTIVE_NAME);
         if (objective == null) {

@@ -29,11 +29,58 @@ public class FoliaAdapter implements PlatformAdapter {
     private final ConcurrentLinkedQueue<Player> updateQueue = new ConcurrentLinkedQueue<>();
     private volatile boolean batchScheduled = false;
 
-    private final Scoreboard sharedScoreboard;
+    private volatile Scoreboard sharedScoreboard;
+    private volatile boolean scoreboardAttempted = false;
+    private volatile boolean scoreboardSupported = false;
 
     public FoliaAdapter(DarkRuneTab plugin) {
         this.plugin = plugin;
-        this.sharedScoreboard = Bukkit.getScoreboardManager().getNewScoreboard();
+        // Ленивая инициализация — Folia не позволяет создавать общий
+        // scoreboard до полной инициализации сервера
+    }
+
+    /**
+     * Ленивая инициализация shared scoreboard.
+     * На Folia getNewScoreboard() бросает UnsupportedOperationException —
+     * в этом случае работаем без общего скорборда (scoreboardSupported = false).
+     */
+    @Override
+    public Scoreboard getSharedScoreboard() {
+        if (!scoreboardAttempted) {
+            synchronized (this) {
+                if (!scoreboardAttempted) {
+                    scoreboardAttempted = true;
+                    try {
+                        sharedScoreboard = Bukkit.getScoreboardManager().getNewScoreboard();
+                        scoreboardSupported = true;
+                    } catch (UnsupportedOperationException e) {
+                        // Folia не поддерживает общий scoreboard
+                        sharedScoreboard = null;
+                        scoreboardSupported = false;
+                        plugin.getLogger().warning(
+                                "Shared scoreboard is not supported on this platform. "
+                                        + "Nametags and Scoreboard modules will be disabled.");
+                    } catch (Exception e) {
+                        sharedScoreboard = null;
+                        scoreboardSupported = false;
+                        plugin.getLogger().warning(
+                                "Failed to create shared scoreboard: " + e.getMessage());
+                    }
+                }
+            }
+        }
+        return sharedScoreboard;
+    }
+
+    /**
+     * Проверка: поддерживается ли общий scoreboard на этой платформе.
+     * Модули nametag/scoreboard должны это учитывать.
+     */
+    public boolean isScoreboardSupported() {
+        if (!scoreboardAttempted) {
+            getSharedScoreboard(); // триггерим ленивую инициализацию
+        }
+        return scoreboardSupported;
     }
 
     @Override
@@ -82,13 +129,20 @@ public class FoliaAdapter implements PlatformAdapter {
         if (!viewer.isOnline() || !target.isOnline()) {
             return;
         }
+        if (!isScoreboardSupported()) {
+            // Fallback: используем displayName игрока напрямую
+            target.displayName(displayName);
+            return;
+        }
 
         runAtPlayer(target, () -> {
             String teamName = getTeamName(target);
-            Team team = sharedScoreboard.getTeam(teamName);
+            Scoreboard board = sharedScoreboard;
+            if (board == null) return;
+            Team team = board.getTeam(teamName);
 
             if (team == null) {
-                team = sharedScoreboard.registerNewTeam(teamName);
+                team = board.registerNewTeam(teamName);
             }
 
             team.prefix(displayName);
@@ -96,16 +150,11 @@ public class FoliaAdapter implements PlatformAdapter {
             team.addEntry(target.getName());
 
             runAtPlayer(viewer, () -> {
-                if (viewer.getScoreboard() != sharedScoreboard) {
-                    viewer.setScoreboard(sharedScoreboard);
+                if (viewer.getScoreboard() != board) {
+                    viewer.setScoreboard(board);
                 }
             });
         });
-    }
-
-    @Override
-    public Scoreboard getSharedScoreboard() {
-        return sharedScoreboard;
     }
 
     @Override

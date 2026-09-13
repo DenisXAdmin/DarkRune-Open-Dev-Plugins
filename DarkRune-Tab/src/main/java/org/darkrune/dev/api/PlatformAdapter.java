@@ -38,6 +38,14 @@ public interface PlatformAdapter {
 
     Scoreboard getSharedScoreboard();
 
+    /**
+     * Проверка, поддерживает ли платформа shared scoreboard.
+     * На Folia это может быть недоступно.
+     */
+    default boolean isScoreboardSupported() {
+        return getSharedScoreboard() != null;
+    }
+
     // ===== Батчинг обновлений =====
 
     void queueUpdate(Player player);

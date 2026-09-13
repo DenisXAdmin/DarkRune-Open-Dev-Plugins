@@ -106,6 +106,32 @@ modules:
     # Интервал обновления в секундах (1-600)
     update_interval: 5
 
+  # ----- Chat (форматирование чата) -----
+  # ОТКЛЮЧЕНО ПО УМОЛЧАНИЮ: плагин не трогает чат,
+  # пока ты явно не включишь этот модуль.
+  chat:
+    enabled: false
+
+    # Формат по умолчанию, если ни одно право не совпало
+    default_format: "%display_lp_prefix%%player_name%%display_lp_suffix%&7: &f%message%"
+
+    # Вырезать цвета, которые игрок ввёл сам (&a, &1 и т.д.)
+    strip_player_colors: true
+
+    # Право, разрешающее игроку использовать цвета в сообщении
+    color_permission: "darkrunetab.chat.colors"
+
+    # Форматы по правам. Больший priority проверяется первым.
+    formats:
+      admin:
+        permission: "darkrunetab.chat.format.admin"
+        priority: 100
+        format: "&c[ADMIN] %display_lp_prefix%%player_name%&c: &f%message%"
+      vip:
+        permission: "darkrunetab.chat.format.vip"
+        priority: 50
+        format: "&6[VIP] %player_name%&6: &f%message%"
+
 # ==========================================================
 #   Placeholders
 # ==========================================================

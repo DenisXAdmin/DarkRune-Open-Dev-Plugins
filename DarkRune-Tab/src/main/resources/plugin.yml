@@ -20,7 +20,7 @@ commands:
 permissions:
   darkrunetab.use:
     description: Basic access to the plugin
-    default: true
+    default: op
   darkrunetab.reload:
     description: Reload configurations
     default: op

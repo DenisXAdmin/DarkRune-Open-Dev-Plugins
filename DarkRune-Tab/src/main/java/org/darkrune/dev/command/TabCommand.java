@@ -73,7 +73,7 @@ public class TabCommand implements CommandExecutor, TabCompleter {
 
     /**
      * /darkrunetab reload
-     * Теперь: конфигы + синхронизация модулей + перезапуск задач
+     * Теперь: конфиги + синхронизация модулей + перезапуск задач
      * + мгновенное применение ко всем игрокам.
      */
     private boolean handleReload(CommandSender sender) {
@@ -180,17 +180,29 @@ public class TabCommand implements CommandExecutor, TabCompleter {
     }
 
     private boolean handleStats(CommandSender sender) {
-        if (!checkPermission(sender, "darkrunetab.debug")) {
+        if (!sender.hasPermission("darkrunetab.debug")) {
+            sender.sendMessage(Utils.parse(plugin.getConfigs().getMessages().getNoPermission()));
             return true;
         }
 
-        sendMessage(sender, "&6=== Cache Statistics ===");
-        sendMessage(sender, "&7" + Caches.getStats());
-        sendMessage(sender, "");
-        sendMessage(sender, "&7LuckPerms: &e" + plugin.getLuckPerms().getCacheStats());
-        sendMessage(sender, "&7Placeholders: &e" + plugin.getPlaceholderResolver().getCacheStats());
-        sendMessage(sender, "&7Active updates: &e" + plugin.getUpdateScheduler().getActivePlayerCount());
+        StringBuilder stats = new StringBuilder();
+        stats.append("&6=== DarkRune Tab Stats ===\n");
+        stats.append("&7Platform: &e").append(plugin.getAdapter().getPlatformName()).append("\n");
+        stats.append("&7Version: &e").append(plugin.getDescription().getVersion()).append("\n");
+        stats.append("&7Active modules: &e").append(plugin.getModuleManager().getActiveModuleNames()).append("\n\n");
 
+        stats.append("&6--- Caches ---\n");
+        stats.append("&7").append(Caches.getStats()).append("\n");
+
+        if (plugin.getLuckPerms() != null) {
+            stats.append("&7").append(plugin.getLuckPerms().getCacheStats()).append("\n");
+        } else {
+            stats.append("&7LuckPerms: &cnot available\n");
+        }
+
+        stats.append("&7").append(plugin.getPlaceholderResolver().getCacheStats()).append("\n");
+
+        sender.sendMessage(Utils.parse(stats.toString()));
         return true;
     }
 
