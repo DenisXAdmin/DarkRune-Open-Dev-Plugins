@@ -63,13 +63,4 @@ mvn clean package
 - Баги и предложения — через [Issues](../../issues)
 - Приложите версию ядра, версию плагина, лог запуска и шаги воспроизведения
 
----
-
-## Другие проекты DarkRune Dev
-
-- **DarkRune Tab** — этот репозиторий
-- Скоро: **DarkRune Spawn**, **DarkRune Kits**
-
----
-
 © 2026 DarkRune Dev
